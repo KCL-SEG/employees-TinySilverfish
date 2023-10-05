@@ -1,31 +1,84 @@
-"""Employee pay calculator."""
-"""ENTER YOUR SOLUTION HERE!"""
-
+# Base Employee class
 class Employee:
     def __init__(self, name):
         self.name = name
-
+    
     def get_pay(self):
-        pass
-
+        """Calculate the pay for the employee."""
+        raise NotImplementedError
+    
     def __str__(self):
-        return self.name
+        """Return a string representation of the pay calculation."""
+        raise NotImplementedError
 
+# Salary Employee subclass
+class SalaryEmployee(Employee):
+    def __init__(self, name, monthly_salary):
+        super().__init__(name)
+        self.monthly_salary = monthly_salary
+    
+    def get_pay(self):
+        return self.monthly_salary
+    
+    def __str__(self):
+        return f"{self.name} works on a monthly salary of {self.monthly_salary}.  Their total pay is {self.monthly_salary}."
 
-# Billie works on a monthly salary of 4000.  Their total pay is 4000.
-billie = Employee('Billie')
+# Hourly Employee subclass
+class HourlyEmployee(Employee):
+    def __init__(self, name, hourly_rate, hours_worked):
+        super().__init__(name)
+        self.hourly_rate = hourly_rate
+        self.hours_worked = hours_worked
+    
+    def get_pay(self):
+        return self.hourly_rate * self.hours_worked
+    
+    def __str__(self):
+        return f"{self.name} works on a contract of {self.hours_worked} hours at {self.hourly_rate}/hour.  Their total pay is {self.get_pay()}."
 
-# Charlie works on a contract of 100 hours at 25/hour.  Their total pay is 2500.
-charlie = Employee('Charlie')
+# Bonus Commission decorator class
+class BonusCommissionEmployee(Employee):
+    def __init__(self, employee, bonus):
+        self._employee = employee
+        self.bonus = bonus
+    
+    def get_pay(self):
+        return self._employee.get_pay() + self.bonus
+    
+    def __str__(self):
+        base_str = str(self._employee).split(".")[0]  # Extract the base string without the total pay part
+        return f"{base_str} and receives a bonus commission of {self.bonus}.  Their total pay is {self.get_pay()}."
 
-# Renee works on a monthly salary of 3000 and receives a commission for 4 contract(s) at 200/contract.  Their total pay is 3800.
-renee = Employee('Renee')
+# Contract Commission decorator class
+class ContractCommissionEmployee(Employee):
+    def __init__(self, employee, contracts_landed, commission_per_contract):
+        self._employee = employee
+        self.contracts_landed = contracts_landed
+        self.commission_per_contract = commission_per_contract
+    
+    def get_pay(self):
+        return self._employee.get_pay() + self.contracts_landed * self.commission_per_contract
+    
+    def __str__(self):
+        base_str = str(self._employee).split(".")[0]  # Extract the base string without the total pay part
+        return f"{base_str} and receives a commission for {self.contracts_landed} contract(s) at {self.commission_per_contract}/contract.  Their total pay is {self.get_pay()}."
 
-# Jan works on a contract of 150 hours at 25/hour and receives a commission for 3 contract(s) at 220/contract.  Their total pay is 4410.
-jan = Employee('Jan')
+# Constructing the employee objects
+billie = SalaryEmployee('Billie', 4000)
+charlie = HourlyEmployee('Charlie', 25, 100)
+renee = ContractCommissionEmployee(SalaryEmployee('Renee', 3000), 4, 200)
+jan = ContractCommissionEmployee(HourlyEmployee('Jan', 25, 150), 3, 220)
+robbie = BonusCommissionEmployee(SalaryEmployee('Robbie', 2000), 1500)
+ariel = BonusCommissionEmployee(HourlyEmployee('Ariel', 30, 120), 600)
 
-# Robbie works on a monthly salary of 2000 and receives a bonus commission of 1500.  Their total pay is 3500.
-robbie = Employee('Robbie')
+# Testing the employees
+employee_data = {
+    'billie': (billie.get_pay(), str(billie)),
+    'charlie': (charlie.get_pay(), str(charlie)),
+    'renee': (renee.get_pay(), str(renee)),
+    'jan': (jan.get_pay(), str(jan)),
+    'robbie': (robbie.get_pay(), str(robbie)),
+    'ariel': (ariel.get_pay(), str(ariel))
+}
 
-# Ariel works on a contract of 120 hours at 30/hour and receives a bonus commission of 600.  Their total pay is 4200.
-ariel = Employee('Ariel')
+employee_data
